@@ -1,13 +1,13 @@
-package com.achyut.spd;
+package com.achyut.spd.userservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringPracticeDemoApplication {
+public class UserServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringPracticeDemoApplication.class, args);
+		SpringApplication.run(UserServiceApplication.class, args);
 	}
 
 }
