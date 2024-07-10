@@ -1,4 +1,4 @@
-package com.achyut.spd.domains;
+package com.achyut.spd.userservice.entities;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
