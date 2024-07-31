@@ -1,3 +1,3 @@
 # User-service
 
-A Spring boot started project 
+A Spring boot starter project for practice purpose
