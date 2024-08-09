@@ -12,7 +12,7 @@ public class User {
 	@Id
 	private String id;	
 	
-	private UserCredentials userCredentials;
+	private Credentials userCredentials;
 	
 	private UserDetails userDetails;
 
