@@ -1,11 +1,11 @@
-package com.achyut.spd.userservice.entities;
+package com.achyut.spd.userservice.dtos;
 
 import java.util.List;
 
 import lombok.Data;
 
 @Data
-public class UserDetails {
+public class UserDetailsDto {
 	
 	private String name;
 	
@@ -15,6 +15,6 @@ public class UserDetails {
 	
 	private List<String> phoneNumbers;
 	
-	private Address address;
+	private AddressDto address;
 
 }
