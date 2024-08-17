@@ -10,15 +10,9 @@ import lombok.Data;
 public class User {
 	
 	@Id
-	private String id;
+	private String id;	
 	
-	private String username;
-	
-	private String password;
-	
-	private String email;
-	
-	private String phoneNumber;
+	private Credentials userCredentials;
 	
 	private UserDetails userDetails;
 
