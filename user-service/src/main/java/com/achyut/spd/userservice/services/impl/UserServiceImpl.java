@@ -2,6 +2,7 @@ package com.achyut.spd.userservice.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+// import org.springframework.util.StringUtils;
 
 import com.achyut.spd.generator.PasswordGenerator;
 import com.achyut.spd.mapper.GenericDynamicMapper;
@@ -13,62 +14,89 @@ import com.achyut.spd.userservice.entities.Address;
 import com.achyut.spd.userservice.entities.Credentials;
 import com.achyut.spd.userservice.entities.User;
 import com.achyut.spd.userservice.entities.UserDetails;
+import com.achyut.spd.userservice.exceptions.ExceptionConstants;
 import com.achyut.spd.userservice.repositories.UserRepository;
 import com.achyut.spd.userservice.services.UserService;
+
+import io.micrometer.common.util.StringUtils;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-	private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-	private final GenericDynamicMapper<User, CreateUserRequest> mapper;
+    private final GenericDynamicMapper<User, CreateUserRequest> mapper;
 
-	private final GenericDynamicMapper<Credentials, CredentialDto> credentialMapper;
+    private final GenericDynamicMapper<Credentials, CredentialDto> credentialMapper;
 
-	private final GenericDynamicMapper<UserDetails, UserDetailsDto> detailsMapper;
+    private final GenericDynamicMapper<UserDetails, UserDetailsDto> detailsMapper;
 
-	private final GenericDynamicMapper<Address, AddressDto> addressMapper;
+    private final GenericDynamicMapper<Address, AddressDto> addressMapper;
 
-	@Autowired
-	public UserServiceImpl(UserRepository userRepository, GenericDynamicMapper<User, CreateUserRequest> mapper,
-			GenericDynamicMapper<Credentials, CredentialDto> credentialMapper,
-			GenericDynamicMapper<UserDetails, UserDetailsDto> detailsMapper,
-			GenericDynamicMapper<Address, AddressDto> addressMapper) {
-		this.userRepository = userRepository;
-		this.mapper = mapper;
-		this.credentialMapper = credentialMapper;
-		this.detailsMapper = detailsMapper;
-		this.addressMapper = addressMapper;
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository,
+            GenericDynamicMapper<User, CreateUserRequest> mapper,
+            GenericDynamicMapper<Credentials, CredentialDto> credentialMapper,
+            GenericDynamicMapper<UserDetails, UserDetailsDto> detailsMapper,
+            GenericDynamicMapper<Address, AddressDto> addressMapper) {
 
-	}
+        this.userRepository = userRepository;
+        this.mapper = mapper;
+        this.credentialMapper = credentialMapper;
+        this.detailsMapper = detailsMapper;
+        this.addressMapper = addressMapper;
 
-	@Override
-	public User createUser(CreateUserRequest userRequest) {
+    }
 
-		User user = new User();
+    @Override
+    public User createUser(CreateUserRequest userRequest) {
 
-		UserDetailsDto detailsDto = userRequest.getUserDetails();
+        if(this.userRepository.isUsernameTaken(userRequest.getUserCredentials()
+                .getUsername())) {
+            throw new IllegalArgumentException(ExceptionConstants.USERNAME_TAKEN);
+        }
 
-		AddressDto addressDto = detailsDto.getAddress();
-		Address address = this.addressMapper.toEntity(addressDto);
+        User user = new User();
 
-		UserDetails userDetails = new UserDetails();
-		userDetails.setAddress(address);
-		userDetails.setName(detailsDto.getName());
-		userDetails.setLastName(detailsDto.getLastName());
-		userDetails.setDateOfBirth(detailsDto.getDateOfBirth());
-		userDetails.setPhoneNumbers(detailsDto.getPhoneNumbers());;
+        UserDetailsDto detailsDto = userRequest.getUserDetails();
 
-		CredentialDto credentialDto = userRequest.getUserCredentials();
-		credentialDto.setPassword(PasswordGenerator.generatePassword(12));
-		Credentials credentials = this.credentialMapper.toEntity(credentialDto);
+        AddressDto addressDto = detailsDto.getAddress();
+        Address address = this.addressMapper.toEntity(addressDto);
 
-		user.setUserCredentials(credentials);
-		user.setUserDetails(userDetails);
+        UserDetails userDetails = new UserDetails();
+        userDetails.setAddress(address);
+        userDetails.setName(detailsDto.getName());
+        userDetails.setLastName(detailsDto.getLastName());
+        userDetails.setDateOfBirth(detailsDto.getDateOfBirth());
+        userDetails.setPhoneNumbers(detailsDto.getPhoneNumbers());
+        ;
 
-		this.userRepository.save(user);
+        CredentialDto credentialDto = userRequest.getUserCredentials();
+        credentialDto.setPassword(PasswordGenerator.generatePassword(12));
+        Credentials credentials = this.credentialMapper.toEntity(credentialDto);
 
-		return user;
-	}
+        user.setUserCredentials(credentials);
+        user.setUserDetails(userDetails);
+
+        this.userRepository.save(user);
+
+        return user;
+    }
+
+    @Override
+    public Credentials getUserByUsername(String username) {
+
+        if(StringUtils.isBlank(username)) {
+            throw new IllegalArgumentException(ExceptionConstants.USERNAME_BLANK);
+        }
+
+        User user = this.userRepository.getUserByUsername(username);
+        
+        if(user == null) {
+            return null;
+        }
+        
+        return user.getUserCredentials();
+    }
 
 }
