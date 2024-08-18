@@ -50,7 +50,7 @@ public class GenericDynamicMapper<S, T> implements GenericMapper<S, T> {
 
 	private void copyProperties(Object source, Object target) {
 
-		Field[] fields = source.getClass().getFields();
+		Field[] fields = source.getClass().getDeclaredFields();
 
 		for (Field field : fields) {
 			field.setAccessible(true);
