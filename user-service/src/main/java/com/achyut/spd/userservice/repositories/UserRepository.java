@@ -14,5 +14,8 @@ public interface UserRepository extends MongoRepository<User, String> {
 	
 	@Query(value = "{'userCredentials.username': ?0}", exists = true)
 	boolean isUsernameTaken(String username);
+	
+	@Query(value = "{'userCredentials.email': ?0}", exists = true)
+	boolean isEmailTaken(String email);
 
 }

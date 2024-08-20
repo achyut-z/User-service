@@ -10,40 +10,43 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.achyut.spd.userservice.dtos.request.CreateUserRequest;
-import com.achyut.spd.userservice.entities.Credentials;
-import com.achyut.spd.userservice.entities.User;
+import com.achyut.spd.userservice.dtos.response.CredentialResponse;
 import com.achyut.spd.userservice.services.UserService;
 
 @RestController
 @RequestMapping("/api/user/")
 public class UserController {
 
-    private final UserService userService;
+	private final UserService userService;
 
-    public UserController(UserService userService) {
+	public UserController(UserService userService) {
 
-        this.userService = userService;
+		this.userService = userService;
 
-    }
+	}
 
-    @PostMapping("create")
-    public ResponseEntity<?> createUser(@RequestBody CreateUserRequest request) {
+	@PostMapping("create")
+	public ResponseEntity<?> createUser(@RequestBody CreateUserRequest request) {
 
-        User user = this.userService.createUser(request);
+		try {
 
-        ResponseEntity<?> response = new ResponseEntity<Object>(user, HttpStatus.OK);
-        return response;
-    }
+			CreateUserRequest user = this.userService.createUser(request);
 
-    @GetMapping("{username}")
-    public ResponseEntity<?> getUserByUsername(@PathVariable("username") String username) {
+			return new ResponseEntity<Object>(user, HttpStatus.OK);
 
-        Credentials userCredentials = this.userService.getUserByUsername(username);
+		} catch (IllegalArgumentException e) {
 
-        ResponseEntity<?> response = new ResponseEntity(userCredentials, HttpStatus.OK);
-        return response;
-    }
-    
-    
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+
+	@GetMapping("{username}")
+	public ResponseEntity<?> getUserByUsername(@PathVariable("username") String username) {
+
+		CredentialResponse userCredentials = this.userService.getUserByUsername(username);
+
+		ResponseEntity<?> response = new ResponseEntity(userCredentials, HttpStatus.OK);
+		return response;
+	}
 
 }
