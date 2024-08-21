@@ -12,6 +12,7 @@ import com.achyut.spd.userservice.dtos.CredentialDto;
 import com.achyut.spd.userservice.dtos.UserDetailsDto;
 import com.achyut.spd.userservice.dtos.request.CreateUserRequest;
 import com.achyut.spd.userservice.dtos.response.CredentialResponse;
+import com.achyut.spd.userservice.dtos.response.UserResponse;
 import com.achyut.spd.userservice.entities.Address;
 import com.achyut.spd.userservice.entities.Credentials;
 import com.achyut.spd.userservice.entities.User;
@@ -49,7 +50,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public CreateUserRequest createUser(CreateUserRequest userRequest) {
+	public UserResponse createUser(CreateUserRequest userRequest) {
 
 		if (this.userRepository.isEmailTaken(userRequest.getUserCredentials().getEmail())) {
 			throw new IllegalArgumentException(ExceptionConstants.EMAIL_TAKEN);
@@ -58,6 +59,8 @@ public class UserServiceImpl implements UserService {
 		if (this.userRepository.isUsernameTaken(userRequest.getUserCredentials().getUsername())) {
 			throw new IllegalArgumentException(ExceptionConstants.USERNAME_TAKEN);
 		}
+		
+		UserResponse response = new UserResponse();
 
 		User user = new User();
 
@@ -81,8 +84,12 @@ public class UserServiceImpl implements UserService {
 		user.setUserDetails(userDetails);
 
 		this.userRepository.save(user);
+		
+		response.setCredentials(credentialDto);
+		response.setName(userDetails.getName());
+		response.setLastName(userDetails.getLastName());
 
-		return userRequest;
+		return response;
 	}
 
 	@Override
