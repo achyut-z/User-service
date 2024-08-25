@@ -5,16 +5,22 @@ import org.springframework.stereotype.Service;
 
 import com.achyut.spd.generator.PasswordGenerator;
 import com.achyut.spd.mapper.GenericDynamicMapper;
+import com.achyut.spd.userservice.constants.ExceptionConstants;
+import com.achyut.spd.userservice.constants.GlobalConstants;
 import com.achyut.spd.userservice.dtos.AddressDto;
 import com.achyut.spd.userservice.dtos.CredentialDto;
 import com.achyut.spd.userservice.dtos.UserDetailsDto;
 import com.achyut.spd.userservice.dtos.request.CreateUserRequest;
+import com.achyut.spd.userservice.dtos.response.CredentialResponse;
+import com.achyut.spd.userservice.dtos.response.UserResponse;
 import com.achyut.spd.userservice.entities.Address;
 import com.achyut.spd.userservice.entities.Credentials;
 import com.achyut.spd.userservice.entities.User;
 import com.achyut.spd.userservice.entities.UserDetails;
 import com.achyut.spd.userservice.repositories.UserRepository;
 import com.achyut.spd.userservice.services.UserService;
+
+import io.micrometer.common.util.StringUtils;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,6 +40,7 @@ public class UserServiceImpl implements UserService {
 			GenericDynamicMapper<Credentials, CredentialDto> credentialMapper,
 			GenericDynamicMapper<UserDetails, UserDetailsDto> detailsMapper,
 			GenericDynamicMapper<Address, AddressDto> addressMapper) {
+
 		this.userRepository = userRepository;
 		this.mapper = mapper;
 		this.credentialMapper = credentialMapper;
@@ -43,7 +50,17 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User createUser(CreateUserRequest userRequest) {
+	public UserResponse createUser(CreateUserRequest userRequest) {
+
+		if (this.userRepository.isEmailTaken(userRequest.getUserCredentials().getEmail())) {
+			throw new IllegalArgumentException(ExceptionConstants.EMAIL_TAKEN);
+		}
+
+		if (this.userRepository.isUsernameTaken(userRequest.getUserCredentials().getUsername())) {
+			throw new IllegalArgumentException(ExceptionConstants.USERNAME_TAKEN);
+		}
+		
+		UserResponse response = new UserResponse();
 
 		User user = new User();
 
@@ -57,7 +74,7 @@ public class UserServiceImpl implements UserService {
 		userDetails.setName(detailsDto.getName());
 		userDetails.setLastName(detailsDto.getLastName());
 		userDetails.setDateOfBirth(detailsDto.getDateOfBirth());
-		userDetails.setPhoneNumbers(detailsDto.getPhoneNumbers());;
+		userDetails.setPhoneNumbers(detailsDto.getPhoneNumbers());
 
 		CredentialDto credentialDto = userRequest.getUserCredentials();
 		credentialDto.setPassword(PasswordGenerator.generatePassword(12));
@@ -67,8 +84,30 @@ public class UserServiceImpl implements UserService {
 		user.setUserDetails(userDetails);
 
 		this.userRepository.save(user);
+		
+		response.setCredentials(credentialDto);
+		response.setName(userDetails.getName());
+		response.setLastName(userDetails.getLastName());
 
-		return user;
+		return response;
+	}
+
+	@Override
+	public CredentialResponse getUserByUsername(String username) {
+
+		if (StringUtils.isBlank(username)) {
+			throw new IllegalArgumentException(ExceptionConstants.USERNAME_BLANK);
+		}
+
+		User user = this.userRepository.getUserByUsername(username);
+
+		if (user == null) {
+			return new CredentialResponse(GlobalConstants.NOT_FOUND);
+		}
+
+		CredentialDto credentials = this.credentialMapper.toDto(user.getUserCredentials());
+
+		return new CredentialResponse(credentials);
 	}
 
 }
