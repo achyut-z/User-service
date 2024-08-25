@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.achyut.spd.userservice.dtos.request.CreateUserRequest;
 import com.achyut.spd.userservice.dtos.response.CredentialResponse;
+import com.achyut.spd.userservice.dtos.response.UserResponse;
 import com.achyut.spd.userservice.services.UserService;
 
 @RestController
@@ -30,7 +31,7 @@ public class UserController {
 
 		try {
 
-			CreateUserRequest user = this.userService.createUser(request);
+			UserResponse user = this.userService.createUser(request);
 
 			return new ResponseEntity<Object>(user, HttpStatus.OK);
 
