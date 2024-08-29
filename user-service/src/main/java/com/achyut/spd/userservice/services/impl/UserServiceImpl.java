@@ -21,6 +21,7 @@ import com.achyut.spd.userservice.entities.User;
 import com.achyut.spd.userservice.entities.UserDetails;
 import com.achyut.spd.userservice.repositories.UserRepository;
 import com.achyut.spd.userservice.services.UserService;
+import com.achyut.spd.validator.PasswordValidator;
 
 import io.micrometer.common.util.StringUtils;
 
@@ -125,6 +126,8 @@ public class UserServiceImpl implements UserService {
         if(StringUtils.isBlank(request.getPassword())) {
             throw new IllegalArgumentException(ExceptionConstants.PASSWORD_BLANK);
         }
+        
+        PasswordValidator.checkPassword(request.getPassword());
 
         UserResponse response = new UserResponse();
 
@@ -162,6 +165,8 @@ public class UserServiceImpl implements UserService {
         if(StringUtils.isBlank(request.getPassword())) {
             throw new IllegalArgumentException(ExceptionConstants.PASSWORD_BLANK);
         }
+        
+        PasswordValidator.checkPassword(request.getPassword());
 
         CredentialDto credentials = this.credentialMapper.toDto(user.getUserCredentials());
 
