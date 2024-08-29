@@ -1,5 +1,10 @@
 package com.achyut.spd.userservice.constants;
 
+/**
+ * Declare custom exception message string here
+ * 
+ * @author achyut
+*/
 public class ExceptionConstants {
 
     public static final String USERNAME_BLANK = "Username cannot be blank";
@@ -17,6 +22,8 @@ public class ExceptionConstants {
     public static final String NO_LOWERCASE = "Password needs atleast one lowercase character";
     
     public static final String NO_DIGIT = "Password needs atleast one digit";
+    
+    public static final String IS_SPACE = "Space is not allowed in password";
     
     
     
