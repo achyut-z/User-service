@@ -70,6 +70,8 @@ public class UserServiceImpl implements UserService {
 
         CredentialDto credentialDto = userRequest.getUserCredentials();
         credentialDto.setPassword(PasswordGenerator.generatePassword(12));
+        
+        user = this.mapper.toEntity(userRequest);
 
         this.userRepository.save(user);
         
