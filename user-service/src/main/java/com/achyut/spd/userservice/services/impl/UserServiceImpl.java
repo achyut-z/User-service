@@ -65,35 +65,19 @@ public class UserServiceImpl implements UserService {
                 .getUsername())) {
             throw new IllegalArgumentException(ExceptionConstants.USERNAME_TAKEN);
         }
-
-        UserResponse response = new UserResponse();
-
+        
         User user = new User();
-
-        UserDetailsDto detailsDto = userRequest.getUserDetails();
-
-        AddressDto addressDto = detailsDto.getAddress();
-        Address address = this.addressMapper.toEntity(addressDto);
-
-        UserDetails userDetails = new UserDetails();
-        userDetails.setAddress(address);
-        userDetails.setName(detailsDto.getName());
-        userDetails.setLastName(detailsDto.getLastName());
-        userDetails.setDateOfBirth(detailsDto.getDateOfBirth());
-        userDetails.setPhoneNumbers(detailsDto.getPhoneNumbers());
 
         CredentialDto credentialDto = userRequest.getUserCredentials();
         credentialDto.setPassword(PasswordGenerator.generatePassword(12));
-        Credentials credentials = this.credentialMapper.toEntity(credentialDto);
-
-        user.setUserCredentials(credentials);
-        user.setUserDetails(userDetails);
 
         this.userRepository.save(user);
+        
+        UserResponse response = new UserResponse();
 
         response.setCredentials(credentialDto);
-        response.setName(userDetails.getName());
-        response.setLastName(userDetails.getLastName());
+        response.setName(user.getUserDetails().getName());
+        response.setLastName(user.getUserDetails().getLastName());
 
         return response;
     }
