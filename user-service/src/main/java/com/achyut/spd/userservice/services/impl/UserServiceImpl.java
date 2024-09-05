@@ -1,5 +1,7 @@
 package com.achyut.spd.userservice.services.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,11 @@ import com.achyut.spd.userservice.entities.User;
 import com.achyut.spd.userservice.entities.UserDetails;
 import com.achyut.spd.userservice.repositories.UserRepository;
 import com.achyut.spd.userservice.services.UserService;
+import com.achyut.spd.validator.EmailValidator;
 import com.achyut.spd.validator.PasswordValidator;
+import com.achyut.spd.validator.PhoneNumberValidator;
+import com.achyut.spd.validator.UsernameValidator;
+import com.achyut.spd.validator.request.CreateUserRequestValidator;
 
 import io.micrometer.common.util.StringUtils;
 
@@ -54,32 +60,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse createUser(CreateUserRequest userRequest) {
+    public UserResponse createUser(CreateUserRequest request) {
 
-        if(this.userRepository.isEmailTaken(userRequest.getUserCredentials()
+        CreateUserRequestValidator.validateRequest(request);
+
+        if(this.userRepository.isEmailTaken(request.getUserCredentials()
                 .getEmail())) {
-            throw new IllegalArgumentException(ExceptionConstants.EMAIL_TAKEN);
+            throw new IllegalArgumentException(GlobalConstants.EMAIL_TAKEN);
         }
 
-        if(this.userRepository.isUsernameTaken(userRequest.getUserCredentials()
+        if(this.userRepository.isUsernameTaken(request.getUserCredentials()
                 .getUsername())) {
-            throw new IllegalArgumentException(ExceptionConstants.USERNAME_TAKEN);
+            throw new IllegalArgumentException(GlobalConstants.USERNAME_TAKEN);
         }
-        
+
         User user = new User();
 
-        CredentialDto credentialDto = userRequest.getUserCredentials();
+        CredentialDto credentialDto = request.getUserCredentials();
         credentialDto.setPassword(PasswordGenerator.generatePassword(12));
-        
-        user = this.mapper.toEntity(userRequest);
+
+        user = this.mapper.toEntity(request);
 
         this.userRepository.save(user);
-        
+
         UserResponse response = new UserResponse();
 
         response.setCredentials(credentialDto);
-        response.setName(user.getUserDetails().getName());
-        response.setLastName(user.getUserDetails().getLastName());
+        response.setName(user.getUserDetails()
+                .getName());
+        response.setLastName(user.getUserDetails()
+                .getLastName());
 
         return response;
     }
@@ -94,7 +104,7 @@ public class UserServiceImpl implements UserService {
         User user = this.userRepository.getUserByUsername(username);
 
         if(user == null) {
-            return new CredentialResponse(GlobalConstants.USER_NOT_FOUND);
+            return new CredentialResponse(ExceptionConstants.USER_NOT_FOUND);
         }
 
         CredentialDto credentials = this.credentialMapper.toDto(user.getUserCredentials());
@@ -112,7 +122,7 @@ public class UserServiceImpl implements UserService {
         if(StringUtils.isBlank(request.getPassword())) {
             throw new IllegalArgumentException(ExceptionConstants.PASSWORD_BLANK);
         }
-        
+
         PasswordValidator.checkPassword(request.getPassword());
 
         UserResponse response = new UserResponse();
@@ -120,7 +130,7 @@ public class UserServiceImpl implements UserService {
         User user = this.userRepository.getUserByUsername(request.getUsername());
 
         if(user == null) {
-            throw new IllegalArgumentException(GlobalConstants.USER_NOT_FOUND);
+            throw new IllegalArgumentException(ExceptionConstants.USER_NOT_FOUND);
         }
 
         user.getUserCredentials()
@@ -151,7 +161,7 @@ public class UserServiceImpl implements UserService {
         if(StringUtils.isBlank(request.getPassword())) {
             throw new IllegalArgumentException(ExceptionConstants.PASSWORD_BLANK);
         }
-        
+
         PasswordValidator.checkPassword(request.getPassword());
 
         CredentialDto credentials = this.credentialMapper.toDto(user.getUserCredentials());
