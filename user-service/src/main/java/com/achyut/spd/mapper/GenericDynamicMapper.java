@@ -2,74 +2,107 @@ package com.achyut.spd.mapper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class GenericDynamicMapper<S, T> implements GenericMapper<S, T> {
 
-	private final Class<S> sourceClass;
-	private final Class<T> targetClass;
+    private final Class<S> sourceClass;
 
-	@Override
-	public T toDto(S entity) {
+    private final Class<T> targetClass;
 
-		try {
+    @Override
+    public T toDto(S entity) {
 
-			T dto = targetClass.getDeclaredConstructor().newInstance();
+        try {
 
-			copyProperties(entity, dto);
+            T dto = targetClass.getDeclaredConstructor()
+                    .newInstance();
 
-			return dto;
+            copyProperties(entity, dto);
 
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new RuntimeException(e.getMessage());
-		}
-	}
+            return dto;
 
-	@Override
-	public S toEntity(T dto) {
+        } catch(Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 
-		try {
+    @Override
+    public S toEntity(T dto) {
 
-			S entity = sourceClass.getDeclaredConstructor().newInstance();
+        try {
 
-			copyProperties(dto, entity);
+            S entity = sourceClass.getDeclaredConstructor()
+                    .newInstance();
 
-			return entity;
+            copyProperties(dto, entity);
 
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new RuntimeException(e.getMessage());
-		}
-	}
+            return entity;
 
-	private void copyProperties(Object source, Object target) {
+        } catch(InstantiationException | IllegalAccessException | IllegalArgumentException |
+                InvocationTargetException | NoSuchMethodException | SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 
-		Field[] fields = source.getClass().getDeclaredFields();
+    private void copyProperties(Object source, Object target) {
 
-		for (Field field : fields) {
-			field.setAccessible(true);
+        Field[] fields = source.getClass()
+                .getDeclaredFields();
 
-			try {
+        for(Field field : fields) {
+            field.setAccessible(true);
 
-				Object value = field.get(source);
+            try {
 
-				Field targetField = target.getClass().getDeclaredField(field.getName());
+                Object value = field.get(source);
 
-				targetField.setAccessible(true);
-				targetField.set(target, value);
+                if(value != null) {
 
-			} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				throw new RuntimeException(e.getMessage());
-			}
-		}
-	}
+                    Field targetField = target.getClass()
+                            .getDeclaredField(field.getName());
+                    targetField.setAccessible(true);
+
+                    if(isCustomObject(value)) {
+
+                        Object targetValue = targetField.getType()
+                                .getDeclaredConstructor()
+                                .newInstance();
+
+                        copyProperties(value, targetValue);
+
+                        targetField.set(target, targetValue);
+
+                    } else {
+
+                        targetField.set(target, value);
+                    }
+                }
+
+            } catch(IllegalArgumentException | IllegalAccessException | NoSuchFieldException |
+                    SecurityException | InstantiationException | InvocationTargetException |
+                    NoSuchMethodException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                throw new RuntimeException(e.getMessage());
+            }
+        }
+    }
+
+    private boolean isCustomObject(Object obj) {
+
+        return !(obj.getClass()
+                .isPrimitive() || obj instanceof String || obj instanceof Number
+                || obj instanceof Boolean || obj instanceof Character || obj instanceof Enum<?>
+                || obj instanceof Collection<?> || obj instanceof Map<?, ?>);
+    }
 
 }

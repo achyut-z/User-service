@@ -2,27 +2,22 @@ package com.achyut.spd.generator;
 
 import java.util.Random;
 
+import com.achyut.spd.userservice.constants.GlobalConstants;
+
 public class PasswordGenerator {
 
-	private static final String UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String ALL_CHARS = GlobalConstants.UPPERCASE + GlobalConstants.LOWERCASE
+            + GlobalConstants.DIGITS + GlobalConstants.SPECIALS;
 
-	private static final String LOWERCASE = UPPERCASE.toLowerCase();
+    public static String generatePassword(int length) {
 
-	private static final String DIGITS = "0123456789";
+        StringBuilder password = new StringBuilder(length);
 
-	private static final String SPECIALS = "`~!@#$%^&*()-_=+[]{}\\|:;\"\',./<>?";
+        for(int i = 0; i < length; i++) {
 
-	private static final String ALL_CHARS = UPPERCASE + LOWERCASE + DIGITS + SPECIALS;
+            password.append(ALL_CHARS.charAt(new Random().nextInt(ALL_CHARS.length())));
+        }
 
-	public static String generatePassword(int length) {
-
-		StringBuilder password = new StringBuilder(length);
-
-		for (int i = 0; i < length; i++) {
-
-			password.append(ALL_CHARS.charAt(new Random().nextInt(ALL_CHARS.length())));
-		}
-
-		return password.toString();
-	}
+        return password.toString();
+    }
 }
