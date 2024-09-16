@@ -24,7 +24,7 @@ public class CreateUserRequestValidator {
 
         UsernameValidator.checkUsername(username);
 
-        if(!(phoneNumbers.isEmpty())) {
+        if(phoneNumbers != null && !phoneNumbers.isEmpty()) {
             phoneNumbers.forEach(ph -> PhoneNumberValidator.checkNumber(ph));
         }
     }

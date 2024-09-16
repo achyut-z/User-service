@@ -14,6 +14,10 @@ public class ExceptionConstants {
     public static final String EMAIL_BLANK = "Email cannot be blank";
 
     public static final String EMAIL_NOT_FOUND = "EMAIL NOT FOUND";
+    
+    public static final String INVALID_EMAIL_DOMAIN = "Email domain is invalid. Please check again.";
+    
+    public static final String INVALID_SMTP = "Invalid SMTP";
 
     public static final String PHONE_BLANK = "Phone number cannot be blank";
     
