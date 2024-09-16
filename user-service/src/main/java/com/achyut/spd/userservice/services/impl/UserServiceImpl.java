@@ -1,26 +1,23 @@
 package com.achyut.spd.userservice.services.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.achyut.spd.generator.PasswordGenerator;
 import com.achyut.spd.mapper.GenericDynamicMapper;
 import com.achyut.spd.userservice.constants.ExceptionConstants;
 import com.achyut.spd.userservice.constants.GlobalConstants;
-import com.achyut.spd.userservice.dtos.AddressDto;
 import com.achyut.spd.userservice.dtos.CredentialDto;
-import com.achyut.spd.userservice.dtos.UserDetailsDto;
 import com.achyut.spd.userservice.dtos.request.ChangePassword;
 import com.achyut.spd.userservice.dtos.request.CreateUserRequest;
 import com.achyut.spd.userservice.dtos.request.SetPassword;
 import com.achyut.spd.userservice.dtos.response.CredentialResponse;
 import com.achyut.spd.userservice.dtos.response.UserResponse;
-import com.achyut.spd.userservice.entities.Address;
 import com.achyut.spd.userservice.entities.Credentials;
 import com.achyut.spd.userservice.entities.User;
-import com.achyut.spd.userservice.entities.UserDetails;
 import com.achyut.spd.userservice.repositories.UserRepository;
 import com.achyut.spd.userservice.services.UserService;
+import com.achyut.spd.validator.PasswordValidator;
+import com.achyut.spd.validator.request.CreateUserRequestValidator;
 
 import io.micrometer.common.util.StringUtils;
 
@@ -33,66 +30,47 @@ public class UserServiceImpl implements UserService {
 
     private final GenericDynamicMapper<Credentials, CredentialDto> credentialMapper;
 
-    private final GenericDynamicMapper<UserDetails, UserDetailsDto> detailsMapper;
-
-    private final GenericDynamicMapper<Address, AddressDto> addressMapper;
-
-    @Autowired
     public UserServiceImpl(UserRepository userRepository,
             GenericDynamicMapper<User, CreateUserRequest> mapper,
-            GenericDynamicMapper<Credentials, CredentialDto> credentialMapper,
-            GenericDynamicMapper<UserDetails, UserDetailsDto> detailsMapper,
-            GenericDynamicMapper<Address, AddressDto> addressMapper) {
+            GenericDynamicMapper<Credentials, CredentialDto> credentialMapper) {
 
         this.userRepository = userRepository;
         this.mapper = mapper;
         this.credentialMapper = credentialMapper;
-        this.detailsMapper = detailsMapper;
-        this.addressMapper = addressMapper;
 
     }
 
     @Override
-    public UserResponse createUser(CreateUserRequest userRequest) {
+    public UserResponse createUser(CreateUserRequest request) {
 
-        if(this.userRepository.isEmailTaken(userRequest.getUserCredentials()
+        CreateUserRequestValidator.validateRequest(request);
+
+        if(this.userRepository.isEmailTaken(request.getUserCredentials()
                 .getEmail())) {
-            throw new IllegalArgumentException(ExceptionConstants.EMAIL_TAKEN);
+            throw new IllegalArgumentException(GlobalConstants.EMAIL_TAKEN);
         }
 
-        if(this.userRepository.isUsernameTaken(userRequest.getUserCredentials()
+        if(this.userRepository.isUsernameTaken(request.getUserCredentials()
                 .getUsername())) {
-            throw new IllegalArgumentException(ExceptionConstants.USERNAME_TAKEN);
+            throw new IllegalArgumentException(GlobalConstants.USERNAME_TAKEN);
         }
-
-        UserResponse response = new UserResponse();
 
         User user = new User();
 
-        UserDetailsDto detailsDto = userRequest.getUserDetails();
-
-        AddressDto addressDto = detailsDto.getAddress();
-        Address address = this.addressMapper.toEntity(addressDto);
-
-        UserDetails userDetails = new UserDetails();
-        userDetails.setAddress(address);
-        userDetails.setName(detailsDto.getName());
-        userDetails.setLastName(detailsDto.getLastName());
-        userDetails.setDateOfBirth(detailsDto.getDateOfBirth());
-        userDetails.setPhoneNumbers(detailsDto.getPhoneNumbers());
-
-        CredentialDto credentialDto = userRequest.getUserCredentials();
+        CredentialDto credentialDto = request.getUserCredentials();
         credentialDto.setPassword(PasswordGenerator.generatePassword(12));
-        Credentials credentials = this.credentialMapper.toEntity(credentialDto);
 
-        user.setUserCredentials(credentials);
-        user.setUserDetails(userDetails);
+        user = this.mapper.toEntity(request);
 
         this.userRepository.save(user);
 
+        UserResponse response = new UserResponse();
+
         response.setCredentials(credentialDto);
-        response.setName(userDetails.getName());
-        response.setLastName(userDetails.getLastName());
+        response.setName(user.getUserDetails()
+                .getName());
+        response.setLastName(user.getUserDetails()
+                .getLastName());
 
         return response;
     }
@@ -107,7 +85,7 @@ public class UserServiceImpl implements UserService {
         User user = this.userRepository.getUserByUsername(username);
 
         if(user == null) {
-            return new CredentialResponse(GlobalConstants.USER_NOT_FOUND);
+            return new CredentialResponse(ExceptionConstants.USER_NOT_FOUND);
         }
 
         CredentialDto credentials = this.credentialMapper.toDto(user.getUserCredentials());
@@ -126,12 +104,14 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException(ExceptionConstants.PASSWORD_BLANK);
         }
 
+        PasswordValidator.checkPassword(request.getPassword());
+
         UserResponse response = new UserResponse();
 
         User user = this.userRepository.getUserByUsername(request.getUsername());
 
         if(user == null) {
-            throw new IllegalArgumentException(GlobalConstants.USER_NOT_FOUND);
+            throw new IllegalArgumentException(ExceptionConstants.USER_NOT_FOUND);
         }
 
         user.getUserCredentials()
@@ -162,6 +142,8 @@ public class UserServiceImpl implements UserService {
         if(StringUtils.isBlank(request.getPassword())) {
             throw new IllegalArgumentException(ExceptionConstants.PASSWORD_BLANK);
         }
+
+        PasswordValidator.checkPassword(request.getPassword());
 
         CredentialDto credentials = this.credentialMapper.toDto(user.getUserCredentials());
 

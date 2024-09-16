@@ -18,7 +18,7 @@ public class PasswordValidator {
         }
 
         if(password.length() < 8) {
-            throw new IllegalArgumentException(GlobalConstants.NOT_ENOUGH_LENGTH);
+            throw new IllegalArgumentException(GlobalConstants.PASSWORD_NOT_LONG);
         }
 
         boolean hasLower = false;
@@ -26,6 +26,10 @@ public class PasswordValidator {
         boolean hasDigit = false;
 
         for(int i = 0; i < password.length(); i++) {
+
+            if(Character.isSpaceChar(password.charAt(i))) {
+                throw new IllegalArgumentException(ExceptionConstants.IS_SPACE);
+            }
 
             if(Character.isLowerCase(password.charAt(i))) {
                 hasLower = true;
@@ -39,9 +43,6 @@ public class PasswordValidator {
                 hasDigit = true;
             }
 
-            if(hasLower && hasUpper && hasDigit) {
-                break;
-            }
         }
 
         if(!hasLower) {
