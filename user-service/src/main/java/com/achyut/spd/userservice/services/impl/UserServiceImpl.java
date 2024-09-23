@@ -1,5 +1,7 @@
 package com.achyut.spd.userservice.services.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.achyut.spd.generator.PasswordGenerator;
@@ -14,6 +16,7 @@ import com.achyut.spd.userservice.dtos.response.CredentialResponse;
 import com.achyut.spd.userservice.dtos.response.UserResponse;
 import com.achyut.spd.userservice.entities.Credentials;
 import com.achyut.spd.userservice.entities.User;
+import com.achyut.spd.userservice.exception.ResourceNotFoundException;
 import com.achyut.spd.userservice.repositories.UserRepository;
 import com.achyut.spd.userservice.services.UserService;
 import com.achyut.spd.validator.PasswordValidator;
@@ -29,6 +32,8 @@ public class UserServiceImpl implements UserService {
     private final GenericDynamicMapper<User, CreateUserRequest> mapper;
 
     private final GenericDynamicMapper<Credentials, CredentialDto> credentialMapper;
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     public UserServiceImpl(UserRepository userRepository,
             GenericDynamicMapper<User, CreateUserRequest> mapper,
@@ -85,7 +90,8 @@ public class UserServiceImpl implements UserService {
         User user = this.userRepository.getUserByUsername(username);
 
         if(user == null) {
-            return new CredentialResponse(ExceptionConstants.USER_NOT_FOUND);
+            LOGGER.warn("User with username {} not found", username);
+            throw new ResourceNotFoundException("USER");
         }
 
         CredentialDto credentials = this.credentialMapper.toDto(user.getUserCredentials());
@@ -111,7 +117,8 @@ public class UserServiceImpl implements UserService {
         User user = this.userRepository.getUserByUsername(request.getUsername());
 
         if(user == null) {
-            throw new IllegalArgumentException(ExceptionConstants.USER_NOT_FOUND);
+            LOGGER.warn("User with username {} not found", request.getUsername());
+            throw new ResourceNotFoundException("USER");
         }
 
         user.getUserCredentials()
