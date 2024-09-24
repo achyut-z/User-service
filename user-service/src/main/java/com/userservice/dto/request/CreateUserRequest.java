@@ -1,7 +1,7 @@
-package com.achyut.spd.userservice.dtos.request;
+package com.userservice.dto.request;
 
-import com.achyut.spd.userservice.dtos.CredentialDto;
-import com.achyut.spd.userservice.dtos.UserDetailsDto;
+import com.userservice.dto.CredentialDto;
+import com.userservice.dto.UserDetailsDto;
 
 import lombok.Data;
 

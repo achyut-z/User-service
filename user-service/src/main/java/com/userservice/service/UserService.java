@@ -1,10 +1,10 @@
-package com.achyut.spd.userservice.services;
+package com.userservice.service;
 
-import com.achyut.spd.userservice.dtos.request.ChangePassword;
-import com.achyut.spd.userservice.dtos.request.CreateUserRequest;
-import com.achyut.spd.userservice.dtos.request.SetPassword;
-import com.achyut.spd.userservice.dtos.response.CredentialResponse;
-import com.achyut.spd.userservice.dtos.response.UserResponse;
+import com.userservice.dto.request.ChangePassword;
+import com.userservice.dto.request.CreateUserRequest;
+import com.userservice.dto.request.SetPassword;
+import com.userservice.dto.response.CredentialResponse;
+import com.userservice.dto.response.UserResponse;
 
 public interface UserService {
 

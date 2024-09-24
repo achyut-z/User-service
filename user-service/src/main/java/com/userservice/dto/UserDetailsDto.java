@@ -1,4 +1,4 @@
-package com.achyut.spd.userservice.dtos;
+package com.userservice.dto;
 
 import java.util.List;
 

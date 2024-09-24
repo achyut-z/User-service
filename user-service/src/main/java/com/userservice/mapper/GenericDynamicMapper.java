@@ -1,4 +1,4 @@
-package com.achyut.spd.mapper;
+package com.userservice.mapper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

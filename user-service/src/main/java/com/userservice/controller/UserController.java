@@ -1,4 +1,4 @@
-package com.achyut.spd.userservice.controllers;
+package com.userservice.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.achyut.spd.userservice.dtos.request.ChangePassword;
-import com.achyut.spd.userservice.dtos.request.CreateUserRequest;
-import com.achyut.spd.userservice.dtos.request.SetPassword;
-import com.achyut.spd.userservice.dtos.response.CredentialResponse;
-import com.achyut.spd.userservice.dtos.response.UserResponse;
-import com.achyut.spd.userservice.services.UserService;
+import com.userservice.dto.request.ChangePassword;
+import com.userservice.dto.request.CreateUserRequest;
+import com.userservice.dto.request.SetPassword;
+import com.userservice.dto.response.CredentialResponse;
+import com.userservice.dto.response.UserResponse;
+import com.userservice.service.UserService;
 
 @RestController
 @RequestMapping("/api/user/")

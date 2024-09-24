@@ -1,11 +1,11 @@
-package com.achyut.spd.validator;
+package com.userservice.validator;
 
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
 
-import com.achyut.spd.userservice.constants.ExceptionConstants;
-import com.achyut.spd.userservice.constants.GlobalConstants;
+import com.userservice.constant.ExceptionConstants;
+import com.userservice.constant.GlobalConstants;
 
 @Component
 public class EmailValidator {

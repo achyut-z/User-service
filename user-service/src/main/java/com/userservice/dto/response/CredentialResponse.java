@@ -1,6 +1,6 @@
-package com.achyut.spd.userservice.dtos.response;
+package com.userservice.dto.response;
 
-import com.achyut.spd.userservice.dtos.CredentialDto;
+import com.userservice.dto.CredentialDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Data;

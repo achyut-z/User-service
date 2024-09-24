@@ -1,4 +1,4 @@
-package com.achyut.spd.userservice.entities;
+package com.userservice.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

@@ -1,4 +1,4 @@
-package com.achyut.spd.userservice.exception;
+package com.userservice.exception;
 
 
 public class ResourceNotFoundException extends RuntimeException {

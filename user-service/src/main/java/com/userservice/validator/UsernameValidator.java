@@ -1,7 +1,7 @@
-package com.achyut.spd.validator;
+package com.userservice.validator;
 
-import com.achyut.spd.userservice.constants.ExceptionConstants;
-import com.achyut.spd.userservice.constants.GlobalConstants;
+import com.userservice.constant.ExceptionConstants;
+import com.userservice.constant.GlobalConstants;
 
 import io.micrometer.common.util.StringUtils;
 

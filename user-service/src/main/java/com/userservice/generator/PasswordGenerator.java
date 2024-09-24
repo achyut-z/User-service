@@ -1,8 +1,8 @@
-package com.achyut.spd.generator;
+package com.userservice.generator;
 
 import java.util.Random;
 
-import com.achyut.spd.userservice.constants.GlobalConstants;
+import com.userservice.constant.GlobalConstants;
 
 public class PasswordGenerator {
 

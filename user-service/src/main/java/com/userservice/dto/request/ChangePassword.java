@@ -1,4 +1,4 @@
-package com.achyut.spd.userservice.dtos.request;
+package com.userservice.dto.request;
 
 import lombok.Data;
 

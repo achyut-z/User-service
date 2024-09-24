@@ -1,4 +1,4 @@
-package com.achyut.spd.userservice.entities;
+package com.userservice.entity;
 
 import lombok.Data;
 

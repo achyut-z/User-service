@@ -1,4 +1,4 @@
-package com.achyut.spd.userservice.constants;
+package com.userservice.constant;
 
 /**
  * Declare custom exception message string here

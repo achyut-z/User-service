@@ -1,4 +1,4 @@
-package com.achyut.spd.mapper;
+package com.userservice.mapper;
 
 /**
  * 

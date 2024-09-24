@@ -1,14 +1,13 @@
-package com.achyut.spd.validator.request;
+package com.userservice.validator.request;
 
 import java.util.Objects;
-import java.util.Optional;
 
-import com.achyut.spd.userservice.dtos.UserDetailsDto;
-import com.achyut.spd.userservice.dtos.request.CreateUserRequest;
-import com.achyut.spd.userservice.exception.ResourceNotFoundException;
-import com.achyut.spd.validator.EmailValidator;
-import com.achyut.spd.validator.UserDetailsValidator;
-import com.achyut.spd.validator.UsernameValidator;
+import com.userservice.dto.UserDetailsDto;
+import com.userservice.dto.request.CreateUserRequest;
+import com.userservice.exception.ResourceNotFoundException;
+import com.userservice.validator.EmailValidator;
+import com.userservice.validator.UserDetailsValidator;
+import com.userservice.validator.UsernameValidator;
 
 public class CreateUserRequestValidator {
 

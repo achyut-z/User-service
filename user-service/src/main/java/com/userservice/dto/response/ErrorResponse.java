@@ -1,4 +1,4 @@
-package com.achyut.spd.userservice.dtos.response;
+package com.userservice.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

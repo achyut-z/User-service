@@ -1,26 +1,26 @@
-package com.achyut.spd.userservice.services.impl;
+package com.userservice.service.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.achyut.spd.generator.PasswordGenerator;
-import com.achyut.spd.mapper.GenericDynamicMapper;
-import com.achyut.spd.userservice.constants.ExceptionConstants;
-import com.achyut.spd.userservice.constants.GlobalConstants;
-import com.achyut.spd.userservice.dtos.CredentialDto;
-import com.achyut.spd.userservice.dtos.request.ChangePassword;
-import com.achyut.spd.userservice.dtos.request.CreateUserRequest;
-import com.achyut.spd.userservice.dtos.request.SetPassword;
-import com.achyut.spd.userservice.dtos.response.CredentialResponse;
-import com.achyut.spd.userservice.dtos.response.UserResponse;
-import com.achyut.spd.userservice.entities.Credentials;
-import com.achyut.spd.userservice.entities.User;
-import com.achyut.spd.userservice.exception.ResourceNotFoundException;
-import com.achyut.spd.userservice.repositories.UserRepository;
-import com.achyut.spd.userservice.services.UserService;
-import com.achyut.spd.validator.PasswordValidator;
-import com.achyut.spd.validator.request.CreateUserRequestValidator;
+import com.userservice.constant.ExceptionConstants;
+import com.userservice.constant.GlobalConstants;
+import com.userservice.dto.CredentialDto;
+import com.userservice.dto.request.ChangePassword;
+import com.userservice.dto.request.CreateUserRequest;
+import com.userservice.dto.request.SetPassword;
+import com.userservice.dto.response.CredentialResponse;
+import com.userservice.dto.response.UserResponse;
+import com.userservice.entity.Credentials;
+import com.userservice.entity.User;
+import com.userservice.exception.ResourceNotFoundException;
+import com.userservice.generator.PasswordGenerator;
+import com.userservice.mapper.GenericDynamicMapper;
+import com.userservice.repository.UserRepository;
+import com.userservice.service.UserService;
+import com.userservice.validator.PasswordValidator;
+import com.userservice.validator.request.CreateUserRequestValidator;
 
 import io.micrometer.common.util.StringUtils;
 

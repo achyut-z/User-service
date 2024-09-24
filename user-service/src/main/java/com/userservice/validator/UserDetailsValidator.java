@@ -1,9 +1,9 @@
-package com.achyut.spd.validator;
+package com.userservice.validator;
 
 import java.util.List;
 
-import com.achyut.spd.userservice.dtos.AddressDto;
-import com.achyut.spd.userservice.dtos.UserDetailsDto;
+import com.userservice.dto.AddressDto;
+import com.userservice.dto.UserDetailsDto;
 
 public class UserDetailsValidator {
     
