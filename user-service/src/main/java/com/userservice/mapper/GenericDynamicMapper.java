@@ -10,9 +10,9 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class GenericDynamicMapper<S, T> implements GenericMapper<S, T> {
 
-    private final Class<S> sourceClass;
+    private Class<S> sourceClass;
 
-    private final Class<T> targetClass;
+    private Class<T> targetClass;
 
     @Override
     public T toDto(S entity) {

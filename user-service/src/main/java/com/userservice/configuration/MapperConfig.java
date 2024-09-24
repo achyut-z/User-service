@@ -18,22 +18,22 @@ public class MapperConfig {
 	
 	@Bean
     public GenericDynamicMapper<User, CreateUserRequest> userMapper() {
-        return new GenericDynamicMapper<>(User.class, CreateUserRequest.class);
+        return new GenericDynamicMapper<User, CreateUserRequest>();
     }
 	
 	@Bean
     public GenericDynamicMapper<Credentials, CredentialDto> credentialsMapper() {
-        return new GenericDynamicMapper<>(Credentials.class, CredentialDto.class);
+        return new GenericDynamicMapper<Credentials, CredentialDto>();
     }
 	
 	@Bean
     public GenericDynamicMapper<UserDetails, UserDetailsDto> detailsMapper() {
-        return new GenericDynamicMapper<>(UserDetails.class, UserDetailsDto.class);
+        return new GenericDynamicMapper<UserDetails, UserDetailsDto>();
     }
 	
 	@Bean
     public GenericDynamicMapper<Address, AddressDto> addressMapper() {
-        return new GenericDynamicMapper<>(Address.class, AddressDto.class);
+        return new GenericDynamicMapper<Address, AddressDto>();
     }
 
 }
