@@ -1,49 +1,86 @@
 package com.userservice.validator;
 
-import java.util.List;
-
+import com.userservice.constant.ExceptionConstants;
+import com.userservice.constant.GlobalConstants;
 import com.userservice.dto.AddressDto;
 import com.userservice.dto.UserDetailsDto;
 
+import java.util.List;
+import java.util.Objects;
+
 public class UserDetailsValidator {
-    
+
     public static void checkDetails(UserDetailsDto details) {
-        
+
         String name = details.getName();
-        
+
         String lastName = details.getLastName();
-        
+
         String dateOfBirth = details.getDateOfBirth();
-        
-        AddressDto address = details.getAddress();
-        
+
         List<String> phoneNumbers = details.getPhoneNumbers();
-        
-        if(phoneNumbers != null && !phoneNumbers.isEmpty()) {
-            phoneNumbers.forEach(ph -> PhoneNumberValidator.checkNumber(ph));
+
+        if (phoneNumbers != null && !phoneNumbers.isEmpty()) {
+            phoneNumbers.forEach(PhoneNumberValidator::checkNumber);
         }
-        
+
+        AddressDto address = details.getAddress();
+
         String city = address.getCity();
-        
+
         String state = address.getState();
-        
+
         Integer zipCode = address.getZipCode();
-        
-        if(name == null || name.isBlank()) {
+
+        if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Name cannot be blank");
         }
-        
-        if(lastName == null || lastName.isBlank()) {
+
+        if (lastName == null || lastName.isBlank()) {
             throw new IllegalArgumentException("Last name cannot be blank");
         }
-        
-        if(dateOfBirth == null || dateOfBirth.isBlank()) {
+
+        if (dateOfBirth == null || dateOfBirth.isBlank()) {
             throw new IllegalArgumentException("Date of birth cannot be blank");
         }
-        
-        if(city == null || city.isBlank()) {
-            
+
+        if (city == null || city.isBlank()) {
+            throw new IllegalArgumentException("City name cannot be null");
         }
+
+        if (state == null || state.isBlank()) {
+            throw new IllegalArgumentException("State name cannot be null");
+        }
+
+        if (Objects.isNull(zipCode)) {
+            throw new IllegalArgumentException("Zip code cannot be null");
+        }
+
+        name = validateString(name);
+        lastName = validateString(lastName);
+        city = validateString(city);
+        state = validateString(state);
     }
 
+    private static String validateString(String value) {
+
+        if (value.length() < 3) {
+            throw new IllegalArgumentException(GlobalConstants.VALUE_NOT_LONG);
+        }
+
+        for (int i = 0; i < value.length(); i++) {
+            if (Character.isDigit(value.charAt(i))) {
+                throw new IllegalArgumentException(ExceptionConstants.IS_DIGIT);
+            }
+
+            if (!Character.isAlphabetic(value.charAt(i))) {
+                throw new IllegalArgumentException(ExceptionConstants.ONLY_ALPHABETIC_CHARACTERS);
+            }
+        }
+        //capitalize first letter
+        String name = String.valueOf(Character.toUpperCase(value.charAt(0)));
+        //convert the string to lowercase
+        value = value.substring(1).toLowerCase();
+        return name + value;
+    }
 }
