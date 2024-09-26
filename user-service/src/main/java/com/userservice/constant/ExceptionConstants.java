@@ -29,4 +29,5 @@ public class ExceptionConstants {
 
     public static final String ONLY_ALPHABETIC_CHARACTERS = "Only alphabetic characters allowed";
 
+    public static final String INVALID_DATE_FORMAT = "Invalid date format";
 }

@@ -56,10 +56,17 @@ public class UserDetailsValidator {
             throw new IllegalArgumentException("Zip code cannot be null");
         }
 
+        DateValidator.checkDate(dateOfBirth);
         name = validateString(name);
         lastName = validateString(lastName);
         city = validateString(city);
         state = validateString(state);
+        validateInteger(zipCode);
+
+        details.setName(name);
+        details.setLastName(lastName);
+        address.setCity(city);
+        address.setState(state);
     }
 
     private static String validateString(String value) {
@@ -82,5 +89,16 @@ public class UserDetailsValidator {
         //convert the string to lowercase
         value = value.substring(1).toLowerCase();
         return name + value;
+    }
+
+    private static void validateInteger(Integer value) {
+
+        if (value < 0) {
+            throw new IllegalArgumentException(GlobalConstants.INVALID_ZIP_FORMAT);
+        }
+
+        if (value < 100000 || value > 999999) {
+            throw new IllegalArgumentException(GlobalConstants.INVALID_ZIP_FORMAT);
+        }
     }
 }
