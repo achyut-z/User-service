@@ -27,149 +27,137 @@ import io.micrometer.common.util.StringUtils;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+	private final UserRepository userRepository;
 
-    private final GenericDynamicMapper<User, CreateUserRequest> mapper;
+	private final GenericDynamicMapper<User, CreateUserRequest> mapper;
 
-    private final GenericDynamicMapper<Credentials, CredentialDto> credentialMapper;
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+	private final GenericDynamicMapper<Credentials, CredentialDto> credentialMapper;
 
-    public UserServiceImpl(UserRepository userRepository,
-            GenericDynamicMapper<User, CreateUserRequest> mapper,
-            GenericDynamicMapper<Credentials, CredentialDto> credentialMapper) {
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
-        this.userRepository = userRepository;
-        this.mapper = mapper;
-        this.credentialMapper = credentialMapper;
+	public UserServiceImpl(UserRepository userRepository, GenericDynamicMapper<User, CreateUserRequest> mapper,
+			GenericDynamicMapper<Credentials, CredentialDto> credentialMapper) {
 
-    }
+		this.userRepository = userRepository;
+		this.mapper = mapper;
+		this.credentialMapper = credentialMapper;
 
-    @Override
-    public UserResponse createUser(CreateUserRequest request) {
+	}
 
-        CreateUserRequestValidator.validateRequest(request);
+	@Override
+	public UserResponse createUser(CreateUserRequest request) {
 
-        if(this.userRepository.isEmailTaken(request.getUserCredentials()
-                .getEmail())) {
-            throw new IllegalArgumentException(GlobalConstants.EMAIL_TAKEN);
-        }
+		LOGGER.info("Validating the request parameter");
+		CreateUserRequestValidator.validateRequest(request);
 
-        if(this.userRepository.isUsernameTaken(request.getUserCredentials()
-                .getUsername())) {
-            throw new IllegalArgumentException(GlobalConstants.USERNAME_TAKEN);
-        }
+		if (this.userRepository.isEmailTaken(request.getUserCredentials().getEmail())) {
+			throw new IllegalArgumentException(GlobalConstants.EMAIL_TAKEN);
+		}
 
-        User user = new User();
+		if (this.userRepository.isUsernameTaken(request.getUserCredentials().getUsername())) {
+			throw new IllegalArgumentException(GlobalConstants.USERNAME_TAKEN);
+		}
 
-        CredentialDto credentialDto = request.getUserCredentials();
-        credentialDto.setPassword(PasswordGenerator.generatePassword(12));
+		CredentialDto credentialDto = request.getUserCredentials();
+		credentialDto.setPassword(PasswordGenerator.generatePassword(12));
 
-        user = this.mapper.toEntity(request);
+		User user = this.mapper.toEntity(request);
 
-        this.userRepository.save(user);
+		this.userRepository.save(user);
 
-        UserResponse response = new UserResponse();
+		UserResponse response = new UserResponse();
 
-        response.setCredentials(credentialDto);
-        response.setName(user.getUserDetails()
-                .getName());
-        response.setLastName(user.getUserDetails()
-                .getLastName());
+		response.setCredentials(credentialDto);
+		response.setName(user.getUserDetails().getName());
+		response.setLastName(user.getUserDetails().getLastName());
 
-        return response;
-    }
+		return response;
+	}
 
-    @Override
-    public CredentialResponse getUserByUsername(String username) {
+	@Override
+	public CredentialResponse getUserByUsername(String username) {
 
-        if(StringUtils.isBlank(username)) {
-            throw new IllegalArgumentException(ExceptionConstants.USERNAME_BLANK);
-        }
+		if (StringUtils.isBlank(username)) {
+			throw new IllegalArgumentException(ExceptionConstants.USERNAME_BLANK);
+		}
 
-        User user = this.userRepository.getUserByUsername(username);
+		User user = this.userRepository.getUserByUsername(username);
 
-        if(user == null) {
-            LOGGER.warn("User with username {} not found", username);
-            throw new ResourceNotFoundException("USER");
-        }
+		if (user == null) {
+			LOGGER.warn("User with username {} not found", username);
+			throw new ResourceNotFoundException("USER");
+		}
 
-        CredentialDto credentials = this.credentialMapper.toDto(user.getUserCredentials());
+		CredentialDto credentials = this.credentialMapper.toDto(user.getUserCredentials());
 
-        return new CredentialResponse(credentials);
-    }
+		return new CredentialResponse(credentials);
+	}
 
-    @Override
-    public UserResponse setPasswordForRegisteredUser(SetPassword request) {
+	@Override
+	public UserResponse setPasswordForRegisteredUser(SetPassword request) {
 
-        if(StringUtils.isBlank(request.getUsername())) {
-            throw new IllegalArgumentException(ExceptionConstants.USERNAME_BLANK);
-        }
+		if (StringUtils.isBlank(request.getUsername())) {
+			throw new IllegalArgumentException(ExceptionConstants.USERNAME_BLANK);
+		}
 
-        if(StringUtils.isBlank(request.getPassword())) {
-            throw new IllegalArgumentException(ExceptionConstants.PASSWORD_BLANK);
-        }
+		if (StringUtils.isBlank(request.getPassword())) {
+			throw new IllegalArgumentException(ExceptionConstants.PASSWORD_BLANK);
+		}
 
-        PasswordValidator.checkPassword(request.getPassword());
+		PasswordValidator.checkPassword(request.getPassword());
 
-        UserResponse response = new UserResponse();
+		UserResponse response = new UserResponse();
 
-        User user = this.userRepository.getUserByUsername(request.getUsername());
+		User user = this.userRepository.getUserByUsername(request.getUsername());
 
-        if(user == null) {
-            LOGGER.warn("User with username {} not found", request.getUsername());
-            throw new ResourceNotFoundException("USER");
-        }
+		if (user == null) {
+			LOGGER.warn("User with username {} not found", request.getUsername());
+			throw new ResourceNotFoundException("USER");
+		}
 
-        user.getUserCredentials()
-                .setPassword(request.getPassword());
+		user.getUserCredentials().setPassword(request.getPassword());
 
-        CredentialDto credentials = this.credentialMapper.toDto(user.getUserCredentials());
+		CredentialDto credentials = this.credentialMapper.toDto(user.getUserCredentials());
 
-        this.userRepository.save(user);
+		this.userRepository.save(user);
 
-        response.setName(user.getUserDetails()
-                .getName());
-        response.setLastName(user.getUserDetails()
-                .getLastName());
-        response.setCredentials(credentials);
+		response.setName(user.getUserDetails().getName());
+		response.setLastName(user.getUserDetails().getLastName());
+		response.setCredentials(credentials);
 
-        return response;
-    }
+		return response;
+	}
 
-    @Override
-    public CredentialResponse changePassword(ChangePassword request) {
+	@Override
+	public CredentialResponse changePassword(ChangePassword request) {
 
-        User user = this.userRepository.getUserByUsername(request.getUsername());
+		User user = this.userRepository.getUserByUsername(request.getUsername());
 
-        if(StringUtils.isBlank(request.getUsername())) {
-            throw new IllegalArgumentException(ExceptionConstants.USERNAME_BLANK);
-        }
+		if (StringUtils.isBlank(request.getUsername())) {
+			throw new IllegalArgumentException(ExceptionConstants.USERNAME_BLANK);
+		}
 
-        if(StringUtils.isBlank(request.getPassword())) {
-            throw new IllegalArgumentException(ExceptionConstants.PASSWORD_BLANK);
-        }
+		if (StringUtils.isBlank(request.getPassword())) {
+			throw new IllegalArgumentException(ExceptionConstants.PASSWORD_BLANK);
+		}
 
-        PasswordValidator.checkPassword(request.getPassword());
+		PasswordValidator.checkPassword(request.getPassword());
 
-        CredentialDto credentials = this.credentialMapper.toDto(user.getUserCredentials());
+		CredentialDto credentials = this.credentialMapper.toDto(user.getUserCredentials());
 
-        if(user.getUserCredentials()
-                .getPassword()
-                .equals(request.getPassword())) {
-            throw new IllegalArgumentException(GlobalConstants.SAME_PASSWORD);
-        }
+		if (user.getUserCredentials().getPassword().equals(request.getPassword())) {
+			throw new IllegalArgumentException(GlobalConstants.SAME_PASSWORD);
+		}
 
-        if(request.getConfirmPassword()
-                .equals(request.getPassword())) {
-            user.getUserCredentials()
-                    .setPassword(request.getPassword());
-            credentials.setPassword(request.getPassword());
-        } else {
-            throw new IllegalArgumentException(ExceptionConstants.PASSWORD_MISMATCH);
-        }
+		if (request.getConfirmPassword().equals(request.getPassword())) {
+			user.getUserCredentials().setPassword(request.getPassword());
+			credentials.setPassword(request.getPassword());
+		}
+		else {
+			throw new IllegalArgumentException(ExceptionConstants.PASSWORD_MISMATCH);
+		}
 
-        return new CredentialResponse(credentials);
-    }
+		return new CredentialResponse(credentials);
+	}
 
 }

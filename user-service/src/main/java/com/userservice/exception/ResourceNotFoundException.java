@@ -1,14 +1,13 @@
 package com.userservice.exception;
 
-
 public class ResourceNotFoundException extends RuntimeException {
-    
-    public ResourceNotFoundException() {
-        super();
-    }
-    
-    public ResourceNotFoundException(String t) {
-        super(t + " NOT FOUND");
-    }
+
+	public ResourceNotFoundException() {
+		super();
+	}
+
+	public ResourceNotFoundException(String t) {
+		super(t + " NOT FOUND");
+	}
 
 }

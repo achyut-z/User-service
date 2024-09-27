@@ -7,9 +7,9 @@ import lombok.Data;
 
 @Data
 public class CreateUserRequest {
-	
+
 	CredentialDto userCredentials;
-	
+
 	UserDetailsDto userDetails;
 
 }

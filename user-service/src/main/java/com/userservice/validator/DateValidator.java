@@ -11,25 +11,27 @@ import java.time.format.DateTimeParseException;
 
 public class DateValidator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DateValidator.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DateValidator.class);
 
-    public static void checkDate(String date) {
+	public static void checkDate(String date) {
 
-        boolean valid = false;
+		boolean valid = false;
 
-        for (String format : GlobalConstants.VALID_DATE_FORMATS) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
-            try {
-                LocalDate.parse(date, formatter);
-                valid = true;
-                break;
-            } catch (DateTimeParseException ex) {
-                LOGGER.warn("{} date format did not match. Trying another format", format);
-            }
-        }
+		for (String format : GlobalConstants.VALID_DATE_FORMATS) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+			try {
+				LocalDate.parse(date, formatter);
+				valid = true;
+				break;
+			}
+			catch (DateTimeParseException ex) {
+				LOGGER.warn("{} date format did not match. Trying another format", format);
+			}
+		}
 
-        if (!valid) {
-            throw new IllegalArgumentException(ExceptionConstants.INVALID_DATE_FORMAT);
-        }
-    }
+		if (!valid) {
+			throw new IllegalArgumentException(ExceptionConstants.INVALID_DATE_FORMAT);
+		}
+	}
+
 }

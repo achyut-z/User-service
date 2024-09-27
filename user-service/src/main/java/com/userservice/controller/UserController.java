@@ -21,70 +21,70 @@ import com.userservice.service.UserService;
 @RequestMapping("/api/user/")
 public class UserController {
 
-    private final UserService userService;
+	private final UserService userService;
 
-    public UserController(UserService userService) {
+	public UserController(UserService userService) {
 
-        this.userService = userService;
+		this.userService = userService;
 
-    }
+	}
 
-    @PostMapping("create")
-    public ResponseEntity<?> createUser(@RequestBody CreateUserRequest request) {
+	@PostMapping("create")
+	public ResponseEntity<?> createUser(@RequestBody CreateUserRequest request) {
 
-        try {
+		try {
 
-            UserResponse user = this.userService.createUser(request);
+			UserResponse user = this.userService.createUser(request);
 
-            return new ResponseEntity<>(user, HttpStatus.OK);
+			return new ResponseEntity<>(user, HttpStatus.OK);
 
-        } catch(IllegalArgumentException e) {
+		}
+		catch (IllegalArgumentException e) {
 
-            return ResponseEntity.badRequest()
-                    .body(e.getMessage());
-        }
-    }
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
 
-    @GetMapping("{username}")
-    public ResponseEntity<?> getUserByUsername(@PathVariable("username") String username) {
+	@GetMapping("{username}")
+	public ResponseEntity<?> getUserByUsername(@PathVariable("username") String username) {
 
-        CredentialResponse userCredentials = this.userService.getUserByUsername(username);
+		CredentialResponse userCredentials = this.userService.getUserByUsername(username);
 
-        ResponseEntity<?> response = new ResponseEntity<>(userCredentials, HttpStatus.OK);
-        return response;
-    }
+		ResponseEntity<?> response = new ResponseEntity<>(userCredentials, HttpStatus.OK);
+		return response;
+	}
 
-    @PutMapping("/setPassword")
-    public ResponseEntity<?> setPassword(@RequestBody SetPassword request) {
+	@PutMapping("/setPassword")
+	public ResponseEntity<?> setPassword(@RequestBody SetPassword request) {
 
-        try {
+		try {
 
-            UserResponse credentials = this.userService.setPasswordForRegisteredUser(request);
+			UserResponse credentials = this.userService.setPasswordForRegisteredUser(request);
 
-            return new ResponseEntity<>(credentials, HttpStatus.OK);
+			return new ResponseEntity<>(credentials, HttpStatus.OK);
 
-        } catch(IllegalArgumentException e) {
+		}
+		catch (IllegalArgumentException e) {
 
-            return ResponseEntity.badRequest()
-                    .body(e.getMessage());
-        }
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
 
-    }
+	}
 
-    @PostMapping("/changePassword")
-    public ResponseEntity<?> changePassword(@RequestBody ChangePassword request) {
+	@PostMapping("/changePassword")
+	public ResponseEntity<?> changePassword(@RequestBody ChangePassword request) {
 
-        try {
+		try {
 
-            CredentialResponse credentials = this.userService.changePassword(request);
+			CredentialResponse credentials = this.userService.changePassword(request);
 
-            return new ResponseEntity<>(credentials, HttpStatus.OK);
+			return new ResponseEntity<>(credentials, HttpStatus.OK);
 
-        } catch(IllegalArgumentException e) {
+		}
+		catch (IllegalArgumentException e) {
 
-            return ResponseEntity.badRequest()
-                    .body(e.getMessage());
-        }
-    }
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
 
 }

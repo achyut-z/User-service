@@ -6,103 +6,100 @@ import java.util.Collection;
 import java.util.Map;
 
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @AllArgsConstructor
 public class GenericDynamicMapper<S, T> implements GenericMapper<S, T> {
 
-    private Class<S> sourceClass;
+	private Class<S> sourceClass;
 
-    private Class<T> targetClass;
+	private Class<T> targetClass;
 
-    @Override
-    public T toDto(S entity) {
+	private static final Logger LOGGER = LoggerFactory.getLogger(GenericDynamicMapper.class);
 
-        try {
+	@Override
+	public T toDto(S entity) {
 
-            T dto = targetClass.getDeclaredConstructor()
-                    .newInstance();
+		try {
 
-            copyProperties(entity, dto);
+			T dto = targetClass.getDeclaredConstructor().newInstance();
 
-            return dto;
+			copyProperties(entity, dto);
 
-        } catch(Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
-    }
+			return dto;
 
-    @Override
-    public S toEntity(T dto) {
+		}
+		catch (Exception e) {
+			LOGGER.warn("Some exception occurred. Error: {}", e.getMessage());
+			throw new RuntimeException(e.getMessage());
+		}
+	}
 
-        try {
+	@Override
+	public S toEntity(T dto) {
 
-            S entity = sourceClass.getDeclaredConstructor()
-                    .newInstance();
+		try {
 
-            copyProperties(dto, entity);
+			S entity = sourceClass.getDeclaredConstructor().newInstance();
 
-            return entity;
+			copyProperties(dto, entity);
 
-        } catch(InstantiationException | IllegalAccessException | IllegalArgumentException |
-                InvocationTargetException | NoSuchMethodException | SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
-    }
+			return entity;
 
-    private void copyProperties(Object source, Object target) {
+		}
+		catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			LOGGER.warn("Some error occurred. Error: {}", e.getMessage());
+			throw new RuntimeException(e.getMessage());
+		}
+	}
 
-        Field[] fields = source.getClass()
-                .getDeclaredFields();
+	private void copyProperties(Object source, Object target) {
 
-        for(Field field : fields) {
-            field.setAccessible(true);
+		Field[] fields = source.getClass().getDeclaredFields();
 
-            try {
+		for (Field field : fields) {
+			field.setAccessible(true);
 
-                Object value = field.get(source);
+			try {
 
-                if(value != null) {
+				Object value = field.get(source);
 
-                    Field targetField = target.getClass()
-                            .getDeclaredField(field.getName());
-                    targetField.setAccessible(true);
+				if (value != null) {
 
-                    if(isCustomObject(value)) {
+					Field targetField = target.getClass().getDeclaredField(field.getName());
+					targetField.setAccessible(true);
 
-                        Object targetValue = targetField.getType()
-                                .getDeclaredConstructor()
-                                .newInstance();
+					if (isCustomObject(value)) {
 
-                        copyProperties(value, targetValue);
+						Object targetValue = targetField.getType().getDeclaredConstructor().newInstance();
 
-                        targetField.set(target, targetValue);
+						copyProperties(value, targetValue);
 
-                    } else {
+						targetField.set(target, targetValue);
 
-                        targetField.set(target, value);
-                    }
-                }
+					}
+					else {
 
-            } catch(IllegalArgumentException | IllegalAccessException | NoSuchFieldException |
-                    SecurityException | InstantiationException | InvocationTargetException |
-                    NoSuchMethodException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                throw new RuntimeException(e.getMessage());
-            }
-        }
-    }
+						targetField.set(target, value);
+					}
+				}
 
-    private boolean isCustomObject(Object obj) {
+			}
+			catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException
+					| InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+				LOGGER.warn("Error occurred. Error: {}", e.getMessage());
+				throw new RuntimeException(e.getMessage());
+			}
+		}
+	}
 
-        return !(obj.getClass()
-                .isPrimitive() || obj instanceof String || obj instanceof Number
-                || obj instanceof Boolean || obj instanceof Character || obj instanceof Enum<?>
-                || obj instanceof Collection<?> || obj instanceof Map<?, ?>);
-    }
+	private boolean isCustomObject(Object obj) {
+
+		return !(obj.getClass().isPrimitive() || obj instanceof String || obj instanceof Number
+				|| obj instanceof Boolean || obj instanceof Character || obj instanceof Enum<?>
+				|| obj instanceof Collection<?> || obj instanceof Map<?, ?>);
+	}
 
 }

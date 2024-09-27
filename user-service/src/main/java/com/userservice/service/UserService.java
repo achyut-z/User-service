@@ -12,8 +12,8 @@ public interface UserService {
 
 	public CredentialResponse getUserByUsername(String username);
 
-    public UserResponse setPasswordForRegisteredUser(SetPassword request);
+	public UserResponse setPasswordForRegisteredUser(SetPassword request);
 
-    public CredentialResponse changePassword(ChangePassword request);
+	public CredentialResponse changePassword(ChangePassword request);
 
 }

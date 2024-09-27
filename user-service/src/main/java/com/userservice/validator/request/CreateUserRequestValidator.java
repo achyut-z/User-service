@@ -8,28 +8,33 @@ import com.userservice.exception.ResourceNotFoundException;
 import com.userservice.validator.EmailValidator;
 import com.userservice.validator.UserDetailsValidator;
 import com.userservice.validator.UsernameValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CreateUserRequestValidator {
 
-    public static void validateRequest(CreateUserRequest request) {
-        
-        if(Objects.isNull(request)) {
-            throw new ResourceNotFoundException(CreateUserRequest.class.getSimpleName());
-        }
-        
-        String email = request.getUserCredentials()
-                .getEmail();
+	private static final Logger LOGGER = LoggerFactory.getLogger(CreateUserRequestValidator.class);
 
-        String username = request.getUserCredentials()
-                .getUsername();
-        
-        UserDetailsDto details = request.getUserDetails();
+	public static void validateRequest(CreateUserRequest request) {
 
-        EmailValidator.checkEmail(email);
+		if (Objects.isNull(request)) {
+			throw new ResourceNotFoundException(CreateUserRequest.class.getSimpleName());
+		}
 
-        UsernameValidator.checkUsername(username);
+		String email = request.getUserCredentials().getEmail();
 
-        UserDetailsValidator.checkDetails(details);
-    }
+		String username = request.getUserCredentials().getUsername();
+
+		UserDetailsDto details = request.getUserDetails();
+
+		LOGGER.info("Validating email");
+		EmailValidator.checkEmail(email);
+
+		LOGGER.info("Validating username");
+		UsernameValidator.checkUsername(username);
+
+		LOGGER.info("Validating user details");
+		UserDetailsValidator.checkDetails(details);
+	}
 
 }

@@ -15,25 +15,25 @@ import com.userservice.entity.UserDetails;
 
 @Configuration
 public class MapperConfig {
-	
+
 	@Bean
-    public GenericDynamicMapper<User, CreateUserRequest> userMapper() {
-        return new GenericDynamicMapper<>(User.class, CreateUserRequest.class);
-    }
-	
+	public GenericDynamicMapper<User, CreateUserRequest> userMapper() {
+		return new GenericDynamicMapper<>(User.class, CreateUserRequest.class);
+	}
+
 	@Bean
-    public GenericDynamicMapper<Credentials, CredentialDto> credentialsMapper() {
-        return new GenericDynamicMapper<>(Credentials.class, CredentialDto.class);
-    }
-	
+	public GenericDynamicMapper<Credentials, CredentialDto> credentialsMapper() {
+		return new GenericDynamicMapper<>(Credentials.class, CredentialDto.class);
+	}
+
 	@Bean
-    public GenericDynamicMapper<UserDetails, UserDetailsDto> detailsMapper() {
-        return new GenericDynamicMapper<>(UserDetails.class, UserDetailsDto.class);
-    }
-	
+	public GenericDynamicMapper<UserDetails, UserDetailsDto> detailsMapper() {
+		return new GenericDynamicMapper<>(UserDetails.class, UserDetailsDto.class);
+	}
+
 	@Bean
-    public GenericDynamicMapper<Address, AddressDto> addressMapper() {
-        return new GenericDynamicMapper<>(Address.class, AddressDto.class);
-    }
+	public GenericDynamicMapper<Address, AddressDto> addressMapper() {
+		return new GenericDynamicMapper<>(Address.class, AddressDto.class);
+	}
 
 }
