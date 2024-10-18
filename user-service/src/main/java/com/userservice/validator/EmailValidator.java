@@ -23,7 +23,7 @@ public class EmailValidator {
 	public static void checkEmail(String email) {
 
 		if (email == null || email.isBlank()) {
-			throw new IllegalArgumentException(ExceptionConstants.EMAIL_BLANK);
+			throw new IllegalArgumentException(ExceptionConstants.BLANK_EMAIL_ERROR_MSG);
 		}
 
 		if (!isValidEmailFormat(email)) {

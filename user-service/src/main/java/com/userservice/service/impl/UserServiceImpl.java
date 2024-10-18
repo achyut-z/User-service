@@ -51,11 +51,11 @@ public class UserServiceImpl implements UserService {
 		CreateUserRequestValidator.validateRequest(request);
 
 		if (this.userRepository.isEmailTaken(request.getUserCredentials().getEmail())) {
-			throw new IllegalArgumentException(GlobalConstants.EMAIL_TAKEN);
+			throw new IllegalArgumentException(GlobalConstants.EMAIL_EXISTS_ERROR_MSG);
 		}
 
 		if (this.userRepository.isUsernameTaken(request.getUserCredentials().getUsername())) {
-			throw new IllegalArgumentException(GlobalConstants.USERNAME_TAKEN);
+			throw new IllegalArgumentException(GlobalConstants.USERNAME_EXISTS_ERROR_MSG);
 		}
 
 		CredentialDto credentialDto = request.getUserCredentials();
@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
 	public CredentialResponse getUserByUsername(String username) {
 
 		if (StringUtils.isBlank(username)) {
-			throw new IllegalArgumentException(ExceptionConstants.USERNAME_BLANK);
+			throw new IllegalArgumentException(ExceptionConstants.BLANK_USERNAME_ERROR_MSG);
 		}
 
 		User user = this.userRepository.getUserByUsername(username);
@@ -97,11 +97,11 @@ public class UserServiceImpl implements UserService {
 	public UserResponse setPasswordForRegisteredUser(SetPassword request) {
 
 		if (StringUtils.isBlank(request.getUsername())) {
-			throw new IllegalArgumentException(ExceptionConstants.USERNAME_BLANK);
+			throw new IllegalArgumentException(ExceptionConstants.BLANK_USERNAME_ERROR_MSG);
 		}
 
 		if (StringUtils.isBlank(request.getPassword())) {
-			throw new IllegalArgumentException(ExceptionConstants.PASSWORD_BLANK);
+			throw new IllegalArgumentException(ExceptionConstants.BLANK_PASSWORD_ERROR_MSG);
 		}
 
 		PasswordValidator.checkPassword(request.getPassword());
@@ -134,11 +134,11 @@ public class UserServiceImpl implements UserService {
 		User user = this.userRepository.getUserByUsername(request.getUsername());
 
 		if (StringUtils.isBlank(request.getUsername())) {
-			throw new IllegalArgumentException(ExceptionConstants.USERNAME_BLANK);
+			throw new IllegalArgumentException(ExceptionConstants.BLANK_USERNAME_ERROR_MSG);
 		}
 
 		if (StringUtils.isBlank(request.getPassword())) {
-			throw new IllegalArgumentException(ExceptionConstants.PASSWORD_BLANK);
+			throw new IllegalArgumentException(ExceptionConstants.BLANK_PASSWORD_ERROR_MSG);
 		}
 
 		PasswordValidator.checkPassword(request.getPassword());
@@ -146,7 +146,7 @@ public class UserServiceImpl implements UserService {
 		CredentialDto credentials = this.credentialMapper.toDto(user.getUserCredentials());
 
 		if (user.getUserCredentials().getPassword().equals(request.getPassword())) {
-			throw new IllegalArgumentException(GlobalConstants.SAME_PASSWORD);
+			throw new IllegalArgumentException(GlobalConstants.SAME_PASSWORD_ERROR_MSG);
 		}
 
 		if (request.getConfirmPassword().equals(request.getPassword())) {
@@ -154,7 +154,7 @@ public class UserServiceImpl implements UserService {
 			credentials.setPassword(request.getPassword());
 		}
 		else {
-			throw new IllegalArgumentException(ExceptionConstants.PASSWORD_MISMATCH);
+			throw new IllegalArgumentException(ExceptionConstants.PASSWORD_MISMATCH_ERROR_MSG);
 		}
 
 		return new CredentialResponse(credentials);

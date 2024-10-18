@@ -72,16 +72,16 @@ public class UserDetailsValidator {
 	private static String validateString(String value) {
 
 		if (value.length() < 3) {
-			throw new IllegalArgumentException(GlobalConstants.VALUE_NOT_LONG);
+			throw new IllegalArgumentException(GlobalConstants.STRING_VALUE_TOO_SHORT_ERROR_MSG);
 		}
 
 		for (int i = 0; i < value.length(); i++) {
 			if (Character.isDigit(value.charAt(i))) {
-				throw new IllegalArgumentException(ExceptionConstants.IS_DIGIT);
+				throw new IllegalArgumentException(ExceptionConstants.DIGIT_NOT_ALLOWED);
 			}
 
 			if (!Character.isAlphabetic(value.charAt(i))) {
-				throw new IllegalArgumentException(ExceptionConstants.ONLY_ALPHABETIC_CHARACTERS);
+				throw new IllegalArgumentException(ExceptionConstants.ONLY_ALPHABETIC_CHARACTERS_ALLOWED);
 			}
 		}
 		// capitalize first letter
@@ -94,11 +94,11 @@ public class UserDetailsValidator {
 	private static void validateInteger(Integer value) {
 
 		if (value < 0) {
-			throw new IllegalArgumentException(GlobalConstants.INVALID_ZIP_FORMAT);
+			throw new IllegalArgumentException(GlobalConstants.INVALID_ZIP_CODE_FORMAT);
 		}
 
 		if (value < 100000 || value > 999999) {
-			throw new IllegalArgumentException(GlobalConstants.INVALID_ZIP_FORMAT);
+			throw new IllegalArgumentException(GlobalConstants.INVALID_ZIP_CODE_FORMAT);
 		}
 	}
 

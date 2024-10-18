@@ -11,32 +11,32 @@ public class PhoneNumberValidator {
 	public static void checkNumber(String number) {
 
 		if (StringUtils.isBlank(number)) {
-			throw new IllegalArgumentException(ExceptionConstants.PHONE_BLANK);
+			throw new IllegalArgumentException(ExceptionConstants.BLANK_PHONE_NUMBER_ERROR_MSG);
 		}
 
 		if (number.length() > 12 || number.length() < 10) {
-			throw new IllegalArgumentException(GlobalConstants.INVALID_PHONE_FORMAT);
+			throw new IllegalArgumentException(GlobalConstants.INVALID_PHONE_NUMBER_FORMAT);
 		}
 
 		if (number.length() == 12) {
 
 			if (!(number.startsWith("+91"))) {
-				throw new IllegalArgumentException(GlobalConstants.INVALID_PHONE_FORMAT);
+				throw new IllegalArgumentException(GlobalConstants.INVALID_PHONE_NUMBER_FORMAT);
 			}
 
 			if (!(number.substring(3).matches("\\d{9}"))) {
-				throw new IllegalArgumentException(GlobalConstants.INVALID_PHONE_FORMAT);
+				throw new IllegalArgumentException(GlobalConstants.INVALID_PHONE_NUMBER_FORMAT);
 			}
 
 		}
 		else if (number.length() == 10) {
 
 			if (!(number.startsWith("7") || number.startsWith("8") || number.startsWith("9"))) {
-				throw new IllegalArgumentException(GlobalConstants.INVALID_PHONE_FORMAT);
+				throw new IllegalArgumentException(GlobalConstants.INVALID_PHONE_NUMBER_FORMAT);
 			}
 
 			if (!number.matches("\\d{10}")) {
-				throw new IllegalArgumentException(GlobalConstants.INVALID_PHONE_FORMAT);
+				throw new IllegalArgumentException(GlobalConstants.INVALID_PHONE_NUMBER_FORMAT);
 			}
 		}
 	}

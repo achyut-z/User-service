@@ -14,11 +14,11 @@ public class PasswordValidator {
 
 		// check if password string is blank
 		if (StringUtils.isBlank(password)) {
-			throw new IllegalArgumentException(ExceptionConstants.PASSWORD_BLANK);
+			throw new IllegalArgumentException(ExceptionConstants.BLANK_PASSWORD_ERROR_MSG);
 		}
 
 		if (password.length() < 8) {
-			throw new IllegalArgumentException(GlobalConstants.PASSWORD_NOT_LONG);
+			throw new IllegalArgumentException(GlobalConstants.PASSWORD_LENGTH_NOT_LONG_ERROR_MSG);
 		}
 
 		boolean hasLower = false;
@@ -28,7 +28,7 @@ public class PasswordValidator {
 		for (int i = 0; i < password.length(); i++) {
 
 			if (Character.isSpaceChar(password.charAt(i))) {
-				throw new IllegalArgumentException(ExceptionConstants.IS_SPACE);
+				throw new IllegalArgumentException(ExceptionConstants.SPACE_NOT_ALLOWED);
 			}
 
 			if (Character.isLowerCase(password.charAt(i))) {
@@ -46,15 +46,15 @@ public class PasswordValidator {
 		}
 
 		if (!hasLower) {
-			throw new IllegalArgumentException(ExceptionConstants.NO_LOWERCASE);
+			throw new IllegalArgumentException(ExceptionConstants.NEED_AT_LEAST_ONE_LOWERCASE_ERROR_MSG);
 		}
 
 		if (!hasUpper) {
-			throw new IllegalArgumentException(ExceptionConstants.NO_UPPERCASE);
+			throw new IllegalArgumentException(ExceptionConstants.NEED_AT_LEAST_ONE_UPPERCASE_ERROR_MSG);
 		}
 
 		if (!hasDigit) {
-			throw new IllegalArgumentException(ExceptionConstants.NO_DIGIT);
+			throw new IllegalArgumentException(ExceptionConstants.NEED_AT_LEAST_ONE_DIGIT_ERROR_MSG);
 		}
 	}
 
